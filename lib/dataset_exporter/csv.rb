@@ -7,6 +7,21 @@ module DatasetExporter
     def initialize(params={})
       @filename = params.fetch(:filename, 'default.txt')
       @ds = params.fetch(:ds)
+      @csv_options = params.fetch(:csv_options, Hash.new)
+    end
+
+    def rows
+      @rows ||= ds.all
+    end
+
+    def to_s(params={})
+      ::CSV.generate(@csv_options.merge(params)) do |csv|
+        first = true
+        rows.each do |row|
+          csv << row.to_enum.inject([]) { |r, n| r << n[0] } and first = false if first
+          csv << row.to_enum.inject([]) { |r, n| r << n[1] }
+        end
+      end
     end
 
     def to_file(params={})
@@ -15,12 +30,8 @@ module DatasetExporter
       # create directories if needed
       Pathname.new(File.dirname(full_filename)).mkpath
 
-      ::CSV.open(full_filename, 'wb') do |csv|
-        first = true
-        ds.all.each do |row|
-          csv << row.to_enum.inject([]) { |r, n| r << n[0] } and first = false if first
-          csv << row.to_enum.inject([]) { |r, n| r << n[1] }
-        end
+      File.open(full_filename, 'wb') do |f|
+        f.puts to_s(params)
       end
     end
 

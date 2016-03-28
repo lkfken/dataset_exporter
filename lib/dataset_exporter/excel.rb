@@ -3,12 +3,14 @@ require 'pathname'
 
 module DatasetExporter
   class Excel
-    attr_reader :ds, :filename, :headers, :workbook, :package
+    include DatasetExporter
+    attr_reader :ds, :filename, :headers, :workbook, :package, :types
 
     def initialize(params={})
       @filename = params.fetch(:filename, 'default.xlsx')
       @ds       = params.fetch(:ds)
       @headers  = params.fetch(:headers, true) # true => include headers
+      @types    = params.fetch(:types, []) #type must be one of [:date, :time, :float, :integer, :string, :boolean, :iso_8601]
       @package  = Axlsx::Package.new
       @workbook = @package.workbook
       add_rows
@@ -42,11 +44,9 @@ module DatasetExporter
       workbook.add_worksheet do |sheet|
         sheet.add_row headings if headers
         rows.each do |row|
-          sheet.add_row row.to_hash.values #, :types => :string
+          sheet.add_row row.to_hash.values, :types => types
         end
       end
     end
-
-
   end
 end

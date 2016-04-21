@@ -4,6 +4,7 @@ require 'pathname'
 module DatasetExporter
   class CSV
     attr_reader :ds, :filename
+
     def initialize(params={})
       @filename = params.fetch(:filename, 'default.txt')
       @ds = params.fetch(:ds)
@@ -26,6 +27,7 @@ module DatasetExporter
 
     def to_file(params={})
       filename = params.fetch(:filename, @filename)
+      params = params.delete_if { |k, v| k == :filename }
       full_filename = File.absolute_path(filename)
       # create directories if needed
       Pathname.new(File.dirname(full_filename)).mkpath

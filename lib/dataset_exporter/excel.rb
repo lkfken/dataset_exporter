@@ -10,7 +10,7 @@ module DatasetExporter
       @filename = params.fetch(:filename, 'default.xlsx')
       @ds       = params.fetch(:ds)
       @headers  = params.fetch(:headers, true) # true => include headers
-      @types    = params.fetch(:types,  _types) #type must be one of [:date, :time, :float, :integer, :string, :boolean, :iso_8601]
+      @types    = params.fetch(:types, _types) #type must be one of [:date, :time, :float, :integer, :string, :boolean, :iso_8601]
       @package  = Axlsx::Package.new
       @workbook = @package.workbook
       add_rows
@@ -42,13 +42,21 @@ module DatasetExporter
 
     def _types
       ds_types.map do |type|
-        type = :integer if type == :fixnum
-        type
+        case type
+        when :fixnum
+          :integer
+        when :falseclass, :trueclass
+          :boolean
+        when :nilclass
+          :string
+        else
+          type
+        end
       end
     end
 
     def ds_types
-      @ds.first.to_hash.values.map{|v|v.class.to_s.downcase.to_sym}
+      @ds.first.to_hash.values.map { |v| v.class.to_s.downcase.to_sym }
     end
 
     def add_rows

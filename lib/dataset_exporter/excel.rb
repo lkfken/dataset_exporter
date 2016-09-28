@@ -43,6 +43,8 @@ module DatasetExporter
     def _types
       ds_types.map do |type|
         case type
+        when :bigdecimal
+          :float
         when :fixnum
           :integer
         when :falseclass, :trueclass

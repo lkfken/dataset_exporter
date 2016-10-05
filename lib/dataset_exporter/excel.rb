@@ -24,6 +24,10 @@ module DatasetExporter
       ds.all
     end
 
+    def to_str
+      to_stream.read
+    end
+
     def to_stream
       package.to_stream
     end

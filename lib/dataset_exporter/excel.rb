@@ -17,7 +17,7 @@ module DatasetExporter
     end
 
     def headings
-      ds.columns
+      ds.first.values.keys
     end
 
     def rows

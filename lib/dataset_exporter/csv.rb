@@ -3,6 +3,7 @@ require 'pathname'
 
 module DatasetExporter
   class CSV
+    include DatasetExporter
     attr_reader :ds, :filename
 
     def initialize(params={})
@@ -14,6 +15,7 @@ module DatasetExporter
     def rows
       @rows ||= ds.all.map(&:values).map(&:values)
     end
+
     def to_s(params={})
       ::CSV.generate(@csv_options.merge(params)) do |csv|
         first = true

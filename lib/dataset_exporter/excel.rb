@@ -16,13 +16,7 @@ module DatasetExporter
       add_rows
     end
 
-    def headings
-      ds.first.values.keys
-    end
 
-    def rows
-      ds.all
-    end
 
     def to_str
       to_stream.read

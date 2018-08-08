@@ -10,4 +10,12 @@ module DatasetExporter
   def columns
     ds.columns
   end
+
+  def headings
+    ds.first.values.keys
+  end
+
+  def rows
+    ds.all
+  end
 end

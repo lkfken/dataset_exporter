@@ -12,9 +12,8 @@ module DatasetExporter
     end
 
     def rows
-      @rows ||= ds.all
+      @rows ||= ds.all.map(&:values).map(&:values)
     end
-
     def to_s(params={})
       ::CSV.generate(@csv_options.merge(params)) do |csv|
         first = true

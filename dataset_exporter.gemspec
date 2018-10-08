@@ -23,5 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "mhc_models"
   spec.add_development_dependency "os"
-  spec.add_dependency "axlsx", '~>2'
+  spec.add_dependency "axlsx"
 end

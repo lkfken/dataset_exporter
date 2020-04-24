@@ -16,10 +16,8 @@ module DatasetExporter
       add_rows
     end
 
-
-
     def to_str
-      to_stream.read
+      to_stream.string.force_encoding(Encoding::ASCII_8BIT)
     end
 
     def to_stream

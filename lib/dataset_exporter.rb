@@ -12,7 +12,13 @@ module DatasetExporter
   end
 
   def headings
-    ds.first.values.keys
+    first_row = ds.first
+    case first_row
+    when Hash
+      first_row.keys
+    else
+      first_row.values.keys
+    end
   end
 
   def rows

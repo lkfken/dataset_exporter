@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email = ["kenneth@leungs.us"]
   spec.summary = %q{Save dataset to a file}
   spec.description = %q{Save dataset to a file}
-  spec.homepage = ""
+  spec.homepage = "https://github.com/lkfken/dataset_exporter"
   spec.license = "MIT"
 
   spec.files = `git ls-files -z`.split("\x0")

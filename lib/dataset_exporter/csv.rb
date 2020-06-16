@@ -6,27 +6,28 @@ module DatasetExporter
     include DatasetExporter
     attr_reader :ds, :filename
 
-    def initialize(params={})
-      @filename = params.fetch(:filename, 'default.txt')
-      @ds = params.fetch(:ds)
-      @csv_options = params.fetch(:csv_options, Hash.new)
+    def initialize(ds:, filename: 'default.txt')
+      @filename = filename
+      @ds = ds
     end
 
     def rows
       @rows ||= ds.all.map(&:values).map(&:values)
     end
 
-    def to_s(params={})
-      ::CSV.generate(@csv_options.merge(params)) do |csv|
-        first = true
-        rows.each do |row|
-          csv << row.to_enum.inject([]) { |r, n| r << n[0] } and first = false if first
-          csv << row.to_enum.inject([]) { |r, n| r << n[1] }
-        end
-      end
+    def csv_table
+      @csv_table ||= ::CSV::Table.new(csv_rows)
     end
 
-    def to_file(params={})
+    def csv_rows
+      @csv_rows ||= rows.map { |row| ::CSV::Row.new(headings, row) }
+    end
+
+    def to_s(params = {})
+      csv_table.to_csv(params)
+    end
+
+    def to_file(params = {})
       filename = params.fetch(:filename, @filename)
       params = params.delete_if { |k, v| k == :filename }
       full_filename = File.absolute_path(filename)

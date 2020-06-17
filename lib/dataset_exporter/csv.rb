@@ -31,10 +31,7 @@ module DatasetExporter
       full_filename = File.absolute_path(filename)
       # create directories if needed
       Pathname.new(File.dirname(full_filename)).mkpath
-
-      File.open(full_filename, 'wb') do |f|
-        f.puts to_s(params)
-      end
+      File.open(full_filename, 'wb') { |f| f.puts to_s(params) }
     end
 
   end

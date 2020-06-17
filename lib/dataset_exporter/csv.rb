@@ -27,7 +27,7 @@ module DatasetExporter
       csv_table.to_csv(params)
     end
 
-    def to_file(filename: filename)
+    def to_file(filename: self.filename)
       full_filename = File.absolute_path(filename)
       # create directories if needed
       Pathname.new(File.dirname(full_filename)).mkpath

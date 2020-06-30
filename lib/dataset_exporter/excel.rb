@@ -6,12 +6,12 @@ module DatasetExporter
     include DatasetExporter
     attr_reader :ds, :filename, :headers, :workbook, :package, :types
 
-    def initialize(params={})
+    def initialize(params = {})
       @filename = params.fetch(:filename, 'default.xlsx')
-      @ds       = params.fetch(:ds)
-      @headers  = params.fetch(:headers, true) # true => include headers
-      @types    = params.fetch(:types, _types) #type must be one of [:date, :time, :float, :integer, :string, :boolean, :iso_8601]
-      @package  = Axlsx::Package.new
+      @ds = params.fetch(:ds)
+      @headers = params.fetch(:headers, true) # true => include headers
+      @types = params.fetch(:types, _types) #type must be one of [:date, :time, :float, :integer, :string, :boolean, :iso_8601]
+      @package = Axlsx::Package.new
       @workbook = @package.workbook
       add_rows
     end
@@ -24,7 +24,7 @@ module DatasetExporter
       package.to_stream
     end
 
-    def to_file(params={})
+    def to_file(params = {})
       save_filename = params.fetch(:filename, filename)
       begin
         package.serialize(save_filename)
@@ -60,9 +60,7 @@ module DatasetExporter
     def add_rows
       workbook.add_worksheet do |sheet|
         sheet.add_row headings if headers
-        rows.each do |row|
-          sheet.add_row row.to_hash.values, :types => types
-        end
+        rows.each { |row| sheet.add_row row, :types => types }
       end
     end
   end

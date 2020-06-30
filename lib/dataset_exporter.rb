@@ -12,16 +12,34 @@ module DatasetExporter
   end
 
   def headings
-    first_row = ds.first
-    case first_row
-    when Hash
-      first_row.keys
-    else
-      first_row.values.keys
-    end
+    @headings ||= begin
+                    case
+                    when first_row.is_a?(Hash)
+                      first_row.keys
+                    when first_row.kind_of?(Sequel::Model)
+                      first_row.values.keys
+                    else
+                      raise "#{first_row.class} not defined"
+                    end
+                  end
   end
 
   def rows
-    ds.all
+    @rows ||= begin
+                case
+                when first_row.is_a?(Hash)
+                  ds.all.map(&:values)
+                when first_row.kind_of?(Sequel::Model)
+                  ds.all.map(&:values).map(&:values)
+                else
+                  raise "#{first_row.class} not defined"
+                end
+              end
+  end
+
+  private
+
+  def first_row
+    @first_row ||= ds.first
   end
 end

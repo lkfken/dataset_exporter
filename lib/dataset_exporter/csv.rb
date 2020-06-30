@@ -11,10 +11,6 @@ module DatasetExporter
       @ds = ds
     end
 
-    def rows
-      @rows ||= ds.all.map(&:values).map(&:values)
-    end
-
     def csv_table
       @csv_table ||= ::CSV::Table.new(csv_rows)
     end

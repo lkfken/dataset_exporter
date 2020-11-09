@@ -41,14 +41,18 @@ module DatasetExporter
         case type
         when :bigdecimal
           :float
-        when :fixnum
+        when :fixnum, :integer
           :integer
         when :falseclass, :trueclass
           :boolean
-        when :nilclass
+        when :nilclass, :string
           :string
+        when :date
+          :date
+        when :time
+          :time
         else
-          type
+          raise "#{type} not defined"
         end
       end
     end

@@ -1,5 +1,5 @@
-require 'axlsx'
-require 'pathname'
+require "axlsx"
+require "pathname"
 
 module DatasetExporter
   class Excel
@@ -7,12 +7,13 @@ module DatasetExporter
     attr_reader :ds, :filename, :headers, :workbook, :package, :types
 
     def initialize(params = {})
-      @filename = params.fetch(:filename, 'default.xlsx')
+      @filename = params.fetch(:filename, "default.xlsx")
       @ds = params.fetch(:ds)
       @headers = params.fetch(:headers, true) # true => include headers
       @types = params.fetch(:types, _types) #type must be one of [:date, :time, :float, :integer, :string, :boolean, :iso_8601]
       @package = Axlsx::Package.new
       @workbook = @package.workbook
+      raise DatasetError, ["@ds has no records!", @ds.inspect].join($/) if @ds.empty?
       add_rows
     end
 
@@ -24,12 +25,11 @@ module DatasetExporter
       package.to_stream
     end
 
-    def to_file(params = {})
-      save_filename = params.fetch(:filename, filename)
+    def to_file(filename: self.filename)
       begin
-        package.serialize(save_filename)
+        package.serialize(filename)
       rescue => ex
-        File.delete(save_filename) if File.exist?(save_filename)
+        File.delete(filename) if File.exist?(filename)
         raise ex
       end
     end

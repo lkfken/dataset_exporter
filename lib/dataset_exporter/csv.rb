@@ -20,7 +20,7 @@ module DatasetExporter
     end
 
     def to_s(params = {})
-      csv_table.to_csv(params)
+      csv_table.to_csv(*params)
     end
 
     def to_stream

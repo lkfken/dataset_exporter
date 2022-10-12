@@ -7,8 +7,11 @@ module DatasetExporter
     attr_reader :filename, :headers, :package, :sheets
 
     # sheets = {name[String]: dataset[Sequel::Dataset]}
-    def initialize(sheets: {}, filename: 'default.xlsx', headers: true,
+    # ds = dataset[Sequel::Dataset]. 
+    def initialize(sheets: {}, ds: nil, filename: 'default.xlsx', headers: true,
                    package: Axlsx::Package.new)
+      sheets.merge!({ "#{ds.hash.to_s}" => ds }) if !ds.nil?
+
       @filename = filename
       @sheets = sheets
       @headers = headers
@@ -62,14 +65,15 @@ module DatasetExporter
     def add_sheets
       sheets.each do |name, ds|
         raise DatasetError, ['@ds has no records!', ds.inspect].join($/) if ds.empty?
+
         records = ds.naked
         headings = records.first.keys
         rows = records.map { |hsh| hsh.values }
-            
+
         workbook.add_worksheet(name: name.to_s) do |sheet|
           sheet.add_row headings if headers
           types = try_convert_types(ds.first.to_hash.values.map { |v| v.class.to_s.downcase.to_sym })
-          rows.each { |row| sheet.add_row row, types: types}
+          rows.each { |row| sheet.add_row row, types: }
         end
       end
     end

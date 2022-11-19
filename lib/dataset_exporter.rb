@@ -7,7 +7,7 @@ module DatasetExporter
 
   # @return an array of hashes
   def records
-    @records ||= ds.naked
+    @records ||= ds.naked.all
   end
 
   def columns
@@ -15,6 +15,7 @@ module DatasetExporter
   end
 
   alias_method :headings, :columns
+  alias_method :headers, :columns
 
   def rows
     @rows ||= records.map { |hsh| hsh.values }

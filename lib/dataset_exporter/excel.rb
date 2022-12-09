@@ -5,12 +5,20 @@ module DatasetExporter
   class Excel
     include DatasetExporter
     attr_reader :filename, :headers, :package, :sheets
+    attr_accessor :workbook
+
+    # https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.numberingformat?view=openxml-2.8.1
+    # 37 = #,##0 ;(#,##0)
+    # 38 = #,##0 ;[Red](#,##0)
+    # example: workbook.styles.add_style num_fmt: 38
+    # example: workbook.styles.add_style format_code: '#,##0;[Red](#,##0)'
 
     # sheets = {name[String]: dataset[Sequel::Dataset]}
-    # ds = dataset[Sequel::Dataset]. 
-    def initialize(sheets: {}, ds: nil, filename: 'default.xlsx', headers: true,
+    # ds = dataset[Sequel::Dataset].
+    def initialize(sheets: { 'Sheet1' => nil }, ds: nil, filename: 'default.xlsx', headers: true,
                    package: Axlsx::Package.new)
-      sheets.merge!({ "#{ds.hash.to_s}" => ds }) if !ds.nil?
+
+      sheets['Sheet1'] = ds if sheets['Sheet1'].nil? && !ds.nil?
 
       @filename = filename
       @sheets = sheets
@@ -64,7 +72,7 @@ module DatasetExporter
 
     def add_sheets
       sheets.each do |name, ds|
-        raise DatasetError, ['@ds has no records!', ds.inspect].join($/) if ds.empty?
+        raise DatasetError, ["Sheet #{name} dataset @ds has no records!", ds.inspect].join($/) if ds.empty?
 
         records = ds.naked
         headings = records.first.keys

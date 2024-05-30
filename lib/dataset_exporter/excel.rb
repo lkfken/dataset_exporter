@@ -74,13 +74,15 @@ module DatasetExporter
       sheets.each do |name, ds|
         raise DatasetError, ["Sheet #{name} dataset @ds has no records!", ds.inspect].join($/) if ds.empty?
 
-        records = ds.naked
+        records = ds.naked.all
         headings = records.first.keys
+        first_row_values = records.first.values
+        column_types = first_row_values.map { |v| v.class.to_s.downcase.to_sym }
         rows = records.map { |hsh| hsh.values }
 
         workbook.add_worksheet(name: name.to_s) do |sheet|
           sheet.add_row headings if headers
-          types = try_convert_types(ds.first.to_hash.values.map { |v| v.class.to_s.downcase.to_sym })
+          types = try_convert_types(column_types)
           rows.each { |row| sheet.add_row row, types: }
         end
       end

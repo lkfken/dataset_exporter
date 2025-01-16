@@ -11,9 +11,19 @@ module DatasetExporter
   end
 
   def columns
-    @columns ||= records.first.keys
+    @columns ||= ds.columns
   end
 
+  def db
+    @db ||= ds.db
+  end
+
+  def ds=(_ds_)
+    @ds = _ds_
+    @columns = _ds_.columns
+    @records = _ds_.naked.all
+  end
+  
   alias_method :headings, :columns
   alias_method :headers, :columns
 

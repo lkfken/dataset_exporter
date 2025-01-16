@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "os"
   spec.add_development_dependency "solargraph"
   spec.add_dependency "caxlsx"
+  spec.add_dependency "csv"
 end

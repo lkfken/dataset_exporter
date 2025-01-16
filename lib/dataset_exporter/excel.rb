@@ -72,16 +72,16 @@ module DatasetExporter
 
     def add_sheets
       sheets.each do |name, ds|
-        raise DatasetError, ["Sheet #{name} dataset @ds has no records!", ds.inspect].join($/) if ds.empty?
+        # raise DatasetError, ["The dataset of Sheet \"#{name}\" has no records!", ds.inspect].join($/) if ds.empty?
 
-        records = ds.naked.all
-        headings = records.first.keys
-        first_row_values = records.first.values
-        column_types = first_row_values.map { |v| v.class.to_s.downcase.to_sym }
+        self.ds = ds
+        first_row_values = ds.empty? ? Array.new(headings.size, "") : records.first.values
+        column_types = first_row_values&.map { |v| v.class.to_s.downcase.to_sym }
+        
         rows = records.map { |hsh| hsh.values }
 
         workbook.add_worksheet(name: name.to_s) do |sheet|
-          sheet.add_row headings if headers
+          sheet.add_row columns
           types = try_convert_types(column_types)
           rows.each { |row| sheet.add_row row, types: }
         end
